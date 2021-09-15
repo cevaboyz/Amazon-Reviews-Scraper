@@ -4,6 +4,7 @@ library(rvest)
 library(purrr)
 library(dplyr)
 library(openxlsx)
+library(tidyr)
 
 
 page_numbers <- 1:100
@@ -18,3 +19,23 @@ purrr::map_df(page_numbers, ~ {
   page %>% html_nodes("[class='a-declarative']") %>% html_text() -> q
   
   data.frame(q) }) -> question
+
+question <- questions_philips %>% rename( domanda = q)
+
+
+question <- question %>% drop_na()
+
+question <- distinct(question)
+
+cols_to_be_rectified <- names(question)[vapply(question, is.character, logical(1))]
+
+question[,cols_to_be_rectified] <- lapply(question[,cols_to_be_rectified], trimws)
+
+question <- distinct(question)
+
+question <- question %>% mutate(domanda = gsub("Visualizza tutte le", "", domanda))
+
+question <- question %>% mutate(domanda = gsub("risposte", "", domanda))
+
+question <- question %>% mutate(domanda = gsub("Domande e clienti", "", domanda))
+
