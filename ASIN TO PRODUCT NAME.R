@@ -1,13 +1,12 @@
-#version3 
 
 # Install / Load relevant packages
 if(!"pacman" %in% installed.packages()[,"Package"]) install.packages("pacman")
 pacman::p_load(rvest, dplyr, tidyr, stringr)
 
 # ASIN product code
-prod_code <- "B084QXG8GL"
+prod_code <- "###" #insert Asin Code
 
-url <- paste0("https://www.amazon.it/dp/", prod_code)
+url <- paste0("https://www.amazon.it/dp/", prod_code) #change the url to match the domain
 
 doc <- read_html(url)
 
