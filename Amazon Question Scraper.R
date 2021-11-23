@@ -1,17 +1,19 @@
 install.packages("purrr")
+install.packages("beepr")
+
 
 library(rvest)
 library(purrr)
 library(dplyr)
 library(openxlsx)
-library(tidyr)
+library(beepr)
 
 
-page_numbers <- 1:100
+page_numbers <- 1:2
 
 purrr::map_df(page_numbers, ~ { 
   
-  url_reviews <- paste0("https://www.amazon.it/ask/questions/asin/B07WTHVQZH/",.x,"/ref=ask_ql_psf_ql_hza?isAnswered=true") #change the ASIN according to the product
+  url_reviews <- paste0("https://www.amazon.it/ask/questions/asin/B07GDBLY4Q/",.x,"/ref=ask_ql_psf_ql_hza?isAnswered=true")
   
   page <- read_html(url_reviews) # Assign results to `doc`
   
@@ -20,22 +22,52 @@ purrr::map_df(page_numbers, ~ {
   
   data.frame(q) }) -> question
 
-question <- questions_philips %>% rename( domanda = q)
+question_repulisti <- question
 
+question_repulisti <- na.omit(question_repulisti) #remove NA rows
 
-question <- question %>% drop_na()
+question_repulisti <- str_trim(question_repulisti$q, side = "both")
 
-question <- distinct(question)
+question_repulisti <- as.data.frame(question_repulisti)
 
-cols_to_be_rectified <- names(question)[vapply(question, is.character, logical(1))]
+question_repulisti <- unique(question_repulisti)
 
-question[,cols_to_be_rectified] <- lapply(question[,cols_to_be_rectified], trimws)
+question_repulisti <-
+  question_repulisti[!grepl("Selezione delle preferenze",
+                            question_repulisti$question_repulisti), ]
 
-question <- distinct(question)
+question_repulisti <- as.data.frame(question_repulisti)
 
-question <- question %>% mutate(domanda = gsub("Visualizza tutte le", "", domanda))
+question_repulisti <-
+  question_repulisti[!grepl("Tutto",
+                            question_repulisti$question_repulisti), ]
 
-question <- question %>% mutate(domanda = gsub("risposte", "", domanda))
+question_repulisti <- as.data.frame(question_repulisti)
 
-question <- question %>% mutate(domanda = gsub("Domande e clienti", "", domanda))
+question_repulisti <-
+  question_repulisti[!grepl("Informazioni sul prodotto",
+                            question_repulisti$question_repulisti), ]
+
+question_repulisti <- as.data.frame(question_repulisti)
+
+question_repulisti <-
+  question_repulisti[!grepl("Domande e risposte clienti.",
+                            question_repulisti$question_repulisti), ]
+
+question_repulisti <- as.data.frame(question_repulisti)
+
+question_repulisti <-
+  question_repulisti[!grepl("Recensioni clienti",
+                            question_repulisti$question_repulisti), ]
+
+question_repulisti <- as.data.frame(question_repulisti)
+
+question_repulisti <-
+  question_repulisti[!grepl("Visualizza tutte le",
+                            question_repulisti$question_repulisti), ]
+
+question_repulisti <- as.data.frame(question_repulisti)
+
+beep()
+
 
