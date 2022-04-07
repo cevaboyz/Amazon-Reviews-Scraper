@@ -1,40 +1,70 @@
-install.packages("purrr")
+#setting up the environment
+if(!"pacman" %in% installed.packages()[,"Package"]) install.packages("pacman")
+pacman::p_load(rvest, dplyr, tidyr, stringr, purrr, openxlsx, beepr, svDialogs)
 
-library(rvest)
-library(purrr)
-library(dplyr)
-library(openxlsx)
-library(tidyr)
+#insert Asin Code
+prod_code <- dlgInput("Insert ASIN", Sys.info()["ASIN"])$res
 
+#insert the number of pages that you want to scrape
+page_number <- as.numeric(dlgInput("Insert the number of page of questions that you would like to scrape", Sys.info()["Page Number"])$res)
 
-page_numbers <- 1:100
+#obtain the range from the page inserted
+page_numbers <- 1:page_number
 
-purrr::map_df(page_numbers, ~ { 
+#iterate the function to get the html page and then extract the nodes containing the questions 
+purrr::map_df(page_numbers, ~ {
+  url_reviews <-
+    paste0(
+      "https://www.amazon.it/product-reviews/",prod_code,"/ref=cm_cr_arp_d_paging_btm_next_",
+      .x,
+      "?ie=UTF8&reviewerType=all_reviews&pageNumber=",
+      .x
+    )
   
-  url_reviews <- paste0("https://www.amazon.it/ask/questions/asin/B088P8JSSZ/",.x,"/ref=ask_ql_psf_ql_hza?isAnswered=true") #change the ASIN according to the product
+  doc <- read_html(url_reviews) # Assign results to `doc`
   
-  page <- read_html(url_reviews) # Assign results to `doc`
+  # Review Title
+  doc %>%
+    html_nodes(
+      "[class='a-size-base a-link-normal review-title a-color-base review-title-content a-text-bold']"
+    ) %>%
+    html_text() -> review_title
   
-  # Review Question
-  page %>% html_nodes("[class='a-declarative']") %>% html_text() -> q
+  # Review Text
+  doc %>%
+    html_nodes("[class='a-size-base review-text review-text-content']") %>%
+    html_text() -> review_text
   
-  data.frame(q) }) -> question
+  # Number of stars in review
+  doc %>%
+    html_nodes("[data-hook='review-star-rating']") %>%
+    html_text() -> review_star
+  
+  # Return a tibble
+  data.frame(review_title,
+             review_text,
+             review_star,
+             page = .x)
+  
+}) -> result
 
-question <- question %>% rename( domanda = q)
+#remove whitespace from the data frame
+cols_to_be_rectified <-
+  names(result)[vapply(result, is.character, logical(1))]
 
+result[, cols_to_be_rectified] <-
+  lapply(result[, cols_to_be_rectified], trimws)
 
-question <- question %>% drop_na()
+#remove the extra space in the star reviews column
+result <- result %>% mutate(review_star = str_sub(review_star, 1, 1))
 
-question <- distinct(question)
+#getting the name of the product from the ASIN
+#obtain the text in the node, remove "\n" from the text, and remove white space
+prod <- html_nodes(doc, "#productTitle") %>% 
+  html_text() %>% 
+  gsub("\n", "", .) %>% 
+  trimws()
 
-question <- data.frame(lapply(question, trimws), stringsAsFactors = FALSE)
+write.xlsx(result, file = paste0(prod, "_recensioni.xlsx"))
 
-question <- distinct(question)
-
-question <- question %>% rename(domanda = question)
-
-question <- question %>% mutate(domanda = gsub("Visualizza tutte le", "", domanda))
-
-question <- question %>% mutate(domanda = gsub("risposte", "", domanda))
-
-question <- question %>% mutate(domanda = gsub("Domande e clienti", "", domanda))
+beepr::beep(sound = 8)
