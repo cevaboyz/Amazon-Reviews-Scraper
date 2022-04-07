@@ -6,11 +6,11 @@ This is a Web Scraping project to analyze product reviews in Amazon.com. Once yo
 
 In this repository you can find:
 
-📍 A function to get the name of the product based on its ASIN ID;
-📍 A function to get the reviews of a product given an ASIN and a number of pages to scrape;
-📍 A function to get the question of the customers/prospects about the product given the ASIN and a number of pages to scrape;
-📍 A more refined function to obtain the reviews based on the work of Surya Murali(https://github.com/Surya-Murali)
-
+1. 📍 A function to get the name of the product based on its ASIN ID;
+2. 📍 A function to get the reviews of a product given an ASIN and a number of pages to scrape;
+3. 📍 A function to get the question of the customers/prospects about the product given the ASIN and a number of pages to scrape;
+4. 📍 A more refined function to obtain the reviews based on the work of Surya Murali(https://github.com/Surya-Murali)
+5. 
 The output of the functions are .xlsx files with a dynamic name corresponding with its product name.
 
 ## Disclaimer 
