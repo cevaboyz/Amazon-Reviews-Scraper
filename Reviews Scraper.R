@@ -1,3 +1,6 @@
+## based on https://github.com/Surya-Murali/Web-Scraping-and-Amazon-Reviews-Analysis with minor changes to adapt it to Amazon IT
+#credits to Surya-Murali®
+
 
 #Install pacman. It reduces typing in package management actions. The function names in pacman package follow the format p_xxx
 install.packages("pacman")
