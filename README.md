@@ -15,4 +15,4 @@ In this repository you can find:
 The output of the functions are .xlsx files with a dynamic name corresponding with its product name.
 
 ## Disclaimer 
-**If you are going to scrape many pages and many products in a session remember to use a proxy to avoid problems with Amazon Bot detector and the ban of your ip
+**If you are going to scrape many pages and many products in a session remember to use a proxy to avoid problems with Amazon Bot detector and the ban of your ip**
