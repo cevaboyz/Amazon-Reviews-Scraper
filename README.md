@@ -1,8 +1,17 @@
 # Amazon Scraper R 
 
-A simple loop that dynamically fetches the URL of the pages with the reviews comments and extract the consequentially selector for the Reviews Title, Text, Stars and Page number, removes the white space (left and right) and trim the Stars text leaving only the number.
+A Web Scraping project to analyze product reviews in Amazon.com
 
-The complete data frame then generates a xlsx file ready to be used.
+This is a Web Scraping project to analyze product reviews in Amazon.com. Once you provide the Product ASIN and the number of pages of reviews you want to scrape you can obtain in a neat dafarame all of the reviews ready to be analyzed manually or with other scripts
 
-Disclaimer 
-If you are going to scrape many pages and many products in a session remember to use a proxy to avoid problems with Amazon Bot detector 
+In this repository you can find:
+
+📍 A function to get the name of the product based on its ASIN ID;
+📍 A function to get the reviews of a product given an ASIN and a number of pages to scrape;
+📍 A function to get the question of the customers/prospects about the product given the ASIN and a number of pages to scrape;
+📍 A more refined function to obtain the reviews based on the work of Surya Murali(https://github.com/Surya-Murali)
+
+The output of the functions are .xlsx files with a dynamic name corresponding with its product name.
+
+## Disclaimer 
+**If you are going to scrape many pages and many products in a session remember to use a proxy to avoid problems with Amazon Bot detector and the ban of your ip
